@@ -1,0 +1,1 @@
+..\bin\ffmpeg.exe -i http://%1:8001/%2 -c:v libx264 -flags +cgop -g 30 -segment_list_flags live -hls_time 2 -hls_segment_type fmp4 -hls_flags delete_segments -map 0:0 -map 0:1 -s %3 -b:v %4k -b:a %5k e2s.m3u8

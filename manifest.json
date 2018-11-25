@@ -1,0 +1,23 @@
+{
+    "name": "E2S Web Interface",
+    "short_name": "E2S",
+	"lang": "en",
+	"orientation": "any",
+	"scope": ".",
+    "icons": [
+        {
+            "src": "img/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }, {
+            "src": "img/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#008cba",
+    "background_color": "#008cba",
+    "start_url": "index.php",
+    "display": "standalone",
+	"gcm_sender_id": "103953800507"
+}

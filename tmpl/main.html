@@ -1,0 +1,220 @@
+<!doctype html>
+
+<html lang="ro">
+
+<head>
+	<title>E2S</title>
+
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+	<link rel="manifest" href="manifest.json">
+	<link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#008cba">
+	<link rel="shortcut icon" href="img/favicon.ico">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-config" content="browserconfig.xml">
+	<meta name="theme-color" content="#008cba">
+	
+	<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/yeti/bootstrap.min.css" rel="stylesheet" integrity="sha384-MEq8xmFd953gp2FVvLd8DUEvfBjGCzDjem+gmDqfyyWcaxX4BUD7TtSu1EszNTvK" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<link href="css/custom.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+
+<body>
+	<div class="header bg-primary text-white py-1">
+		<div class="container">
+			<div class="row">
+				<div class="col-7">
+					<?=app?><br>
+					<?=$info["brand"]?> <?=$info["model"]?> (<?=$info["friendlyimagedistro"]?>)
+				</div>
+				<div class="col-5 text-right small pt-1">
+					<strong>
+					<span id="activeService">
+						<?php if (isset($active["service"])): ?>
+							<?=$active["service"]?>
+						<?php endif; ?>
+					</span>
+					</strong>
+					<br>
+					<span id="activeTuner">
+						<?php if (isset($active["tuner"])): ?>
+						<?=$active["tuner"]?>
+						<?php endif; ?>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<nav class="navbar navbar-expand-sm sticky-top navbar-light bg-light">
+		<div class="container">
+			<button id="power" class="btn mr-2" title="Power"><i class="fa fa-fw fa-power-off"></i><span class="d-none d-md-inline-block">&nbsp;Power</span></button>
+			<a id="settings" class="btn btn-info text-white mr-2" title="Settings" href="?settings"><i class="fa fa-fw fa-sliders-h"></i><span class="d-none d-md-inline-block">&nbsp;Settings</span></a>
+			<ul class="navbar-nav ml-auto">
+				<?php if (isset($_SESSION["authenticated"])): ?>
+					<button id="logout" class="btn btn-info" title="Logout"><i class="fa fa-fw fa-sign-out-alt"></i><span class="d-none d-md-inline-block">&nbsp;Logout</span></button>
+				<?php endif; ?>
+			</ul>
+		</div>
+	</nav>
+
+	<p/>
+	
+	<div class="container">	
+		<div class="row">
+			<div class="col-md-8 col-sm-12">
+			<div>
+			<video class="w-100" id="video" controls></video>
+			<div id="videoText"><i class="fas fa-spinner fa-spin fa-4x"></i><br>Setting up transcoding, please wait...</div>
+			</div>
+			</div>
+			<div class="col-md-4 col-sm-12">
+				<div class="card bg-secondary border-light">
+					<div class="card-header">
+						<div class="float-left pt-2">
+							<i class="fa fa-stream"></i>&nbsp;Streaming
+						</div>
+						<div class="float-right">
+							<button id="stop" class="btn btn-info mr-2" title="Stop transcoding"><i class="fa fa-fw fa-stop"></i><span class="d-none d-md-inline-block">&nbsp;Stop</span></button>
+							<button id="restart" class="btn btn-info" title="(Re)start transcoding"><i class="fa fa-fw fa-play"></i><span class="d-none d-md-inline-block">&nbsp;(Re)Start</span></button>
+						</div>
+					</div>
+					<div class="card-body">
+						<form class="form">
+							<div class="form-group row">
+								<label for="resolutions" class="col-sm-6 col-form-label col-form-label-sm mt-1">Resolution (pixels)</label>
+								<div class="col-sm-6">
+									<select class="custom-select form-control-sm" id="resolutions">
+									<?php foreach ($conf["resolutions"] as $resolution): ?>
+										<option value="<?=$resolution?>"><?=$resolution?></option>
+									<?php endforeach; ?>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="videoBitrates" class="col-sm-6 col-form-label col-form-label-sm mt-1">Video bitrate (kbps)</label>
+								<div class="col-sm-6">
+									<select class="custom-select form-control-sm" id="videoBitrates">
+									<?php foreach ($conf["videoBitrates"] as $videoBitrate): ?>
+										<option value="<?=$videoBitrate?>"><?=$videoBitrate?></option>
+									<?php endforeach; ?>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="audioBitrates" class="col-sm-6 col-form-label col-form-label-sm mt-1">Audio bitrate (kbps)</label>
+								<div class="col-sm-6">
+									<select class="custom-select form-control-sm" id="audioBitrates">
+									<?php foreach ($conf["audioBitrates"] as $audioBitrate): ?>
+										<option value="<?=$audioBitrate?>"><?=$audioBitrate?></option>
+									<?php endforeach; ?>
+									</select>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p/>
+
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div class="card bg-secondary text-white border-light">
+					<div class="card-header">
+						<ul class="nav nav-pills card-header-pills" role="tablist">
+							<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#bouquets" role="tab" aria-controls="home">Bouquets</a></li>
+							<?php if ($GLOBALS["conf"]["showServices"]): ?>
+							<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#satellites" role="tab" aria-controls="profile">Satellites</a></li>
+							<?php endif; ?>
+						</ul>
+					</div>
+					<div class="card-body p-0">
+						<div class="tab-content">
+							<div class="tab-pane active" id="bouquets" role="tabpanel">
+								<div class="accordion" id="b-accordion">
+								<?php foreach ($bouquets as $sn => $bouquet): ?> 
+									<?php if (sizeof($bouquet["subservices"]) > 0): ?>
+										<div class="card border-0">
+											<div style="cursor: pointer" class="card-header" data-toggle="collapse" data-target="#b-collapse<?=$sn?>" id="b-heading<?=$sn?>">
+												<button class="btn btn-link list-button collapsed" type="button" aria-expanded="false" aria-controls="collapse<?=$sn?>"><?=preg_replace('/[[:cntrl:]]/', '', $bouquet["servicename"])?><br></button>
+											</div>
+											<div id="b-collapse<?=$sn?>" class="collapse" aria-labelledby="b-heading<?=$sn?>" data-parent="#b-accordion">
+												<div class="card-body">
+													<ul class="list-group list-group-flush">
+													<?php foreach ($bouquet["subservices"] as $subservice): ?>
+														<a class="serviceLink list-group-item list-group-item-action" href="" sRef="<?=$_SERVER["PHP_SELF"]?>?sRef=<?=$subservice["servicereference"]?>"><?=preg_replace('/[[:cntrl:]]/', '', $subservice["servicename"])?></a>
+													<?php endforeach; ?>
+													</ul>
+												</div>
+											</div>
+										</div>
+									<?php endif; ?>
+								<?php endforeach; ?>
+								</div>
+							</div>
+							<?php if ($GLOBALS["conf"]["showServices"]): ?>
+							<div class="tab-pane" id="satellites" role="tabpanel">
+								<div class="accordion" id="s-accordion">
+								<?php foreach ($satellites as $sn => $satellite): ?> 
+									<?php if (sizeof($satellite["subservices"]) > 0): ?>
+										<div class="card border-0">
+											<div style="cursor: pointer" class="card-header" id="s-heading<?=$sn?>" data-toggle="collapse" data-target="#s-collapse<?=$sn?>">
+												<button class="btn btn-link list-button collapsed" type="button" aria-expanded="false" aria-controls="collapse<?=$sn?>"><?=preg_replace('/[[:cntrl:]]/', '', $satellite["name"])?><br></button>
+											</div>
+											<div id="s-collapse<?=$sn?>" class="collapse" aria-labelledby="s-heading<?=$sn?>" data-parent="#s-accordion">
+												<div class="card-body">
+													<ul class="list-group list-group-flush">
+													<?php foreach ($satellite["subservices"] as $subservice): ?>
+														<a class="serviceLink list-group-item list-group-item-action" href="" sRef="<?=$_SERVER["PHP_SELF"]?>?sRef=<?=$subservice["servicereference"]?>"><?=preg_replace('/[[:cntrl:]]/', '', $subservice["servicename"])?></a>
+													<?php endforeach; ?>
+													</ul>
+												</div>
+											</div>
+										</div>
+									<?php endif; ?>
+								<?php endforeach; ?>
+								</div>
+							</div>
+							<?php endif; ?>
+						</div>  
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	<p/>
+	<br/><br/>
+		
+	<div class="footer bg-primary text-white p-2">
+		<div class="container">
+			<div class="row">
+				<div class="col-6">
+					<strong>E2S v<?=ver?></strong> (md0)
+				</div>
+				<div class="col-6 text-right">
+					PHP <?=phpversion();?> / <?=PHP_OS?>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	<script>
+		localStorage.setItem('autoplay', '<?=$autoplay?>');
+		sessionStorage.setItem('sRef', '<?=$_SERVER["PHP_SELF"]?>?sRef=<?=$currentService["ref"]?>');
+		sessionStorage.setItem('inStandby', <?=$inStandby?>);
+	</script>
+    <script src="js/app.js"></script>
+	
+</body>
+
+</html>

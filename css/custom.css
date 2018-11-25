@@ -1,0 +1,60 @@
+body {
+	overscroll-behavior: none;
+	overscroll-behavior-y: contain;
+}
+
+.login-page {
+	background: url('../img/background.jpg') no-repeat fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	display: table;
+    margin: 0 auto;
+}
+
+.login-box-body {
+	background-color: rgba(0, 140, 186, 0.8);
+	z-index: 1000;
+	color: #eee;
+	display: table-cell;
+    vertical-align: middle;
+	width: 300px;
+}
+
+.navbar {
+	box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
+}
+
+.footer {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	box-shadow: 0 -3px 5px rgba(57, 63, 72, 0.3);
+}
+
+.vertical-center {
+	height: 100vh;
+}
+
+#videoText {
+	text-align: center;
+	position: absolute;
+	padding-top: 15%;
+	top: 0px;
+	bottom: 5px;
+	left: 15px;
+	right: 15px;
+	background-color: rgba(255,255,255,0.8);
+	display: none;
+}
+
+.btn-link:hover, .btn-link:active, .btn-link:focus {
+	text-decoration: none;
+}
+
+.list-button {
+	white-space: normal !important;
+	text-align: left;
+}
