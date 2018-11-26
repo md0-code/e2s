@@ -38,7 +38,7 @@
 					<strong>
 					<span id="activeService">
 						<?php if (isset($active["service"])): ?>
-							<?=$active["service"]?>
+							<?=preg_replace('/[[:cntrl:]]/', '', $active["service"])?>
 						<?php endif; ?>
 					</span>
 					</strong>
