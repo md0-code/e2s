@@ -38,14 +38,14 @@ $('#power').on('click', function() {
 	if (sessionStorage.inStandby == 0) {
 		$('#power').removeClass('btn-success');
 		$('#power').addClass('btn-danger');
-		$.get('index.php?power=0', function(data, status) {
+		$.get('?power=0', function(data, status) {
 			if ($.parseJSON(data).result == true) sessionStorage.inStandby = 1;
 		});
 	}
 	else if (sessionStorage.getItem('inStandby') == 1) {
 		$('#power').removeClass('btn-danger');
 		$('#power').addClass('btn-success');
-		$.get('index.php?power=1', function(data, status) {
+		$.get('?power=1', function(data, status) {
 			if ($.parseJSON(data).result == true) sessionStorage.inStandby = 0;
 		});
 	}
@@ -53,8 +53,8 @@ $('#power').on('click', function() {
 });
 
 $('#logout').on('click', function() {
-	$.get('index.php?logout', function(data, status) {
-		window.location = 'index.php';
+	$.get('?logout', function(data, status) {
+		window.location = '?';
 	});
 });
 
@@ -79,11 +79,14 @@ function saveSettings() {
 
 function stopTranscode() {
 	hls.detachMedia();
-	$.get('index.php?stop');
+	$.get('?stop');
+	$('#videoText').hide();
 }
 
 function startTranscode() {
 	video.pause();
+	hls.detachMedia();
+	$.get('?stop');
 	$('#videoText').show();
     $.get(sessionStorage.sRef+'&res='+localStorage.e2sResolution+'&vb='+localStorage.e2sVideoBitrate+'&ab='+localStorage.e2sAudioBitrate, function(data, status) {
 	$('#activeService').html($.parseJSON(data).service);
@@ -100,9 +103,9 @@ function startTranscode() {
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
-//  e.preventDefault();
+//e.preventDefault();
   e.prompt();
-  //  deferredPrompt = e;
+//deferredPrompt = e;
 }); 
 
 $(document).ready(function() {
