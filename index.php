@@ -1,7 +1,7 @@
 <?php
 
 const app = 'E2S Web Interface';
-const ver = '0.1';
+const ver = '0.1.5';
 
 $GLOBALS["conf"] = include 'config.php';
 	session_start();
@@ -42,7 +42,7 @@ function isTranscoding() {
 
 function stopStream() {
 	if (shell_exec('taskkill /F /T /IM ffmpeg.*')) {
-		array_map('unlink', glob(getcwd().'/stream/*.m4s'));
+		array_map('unlink', glob(getcwd().'/stream/*.*'));
 		return true;
 	}
 	else return false;
@@ -50,7 +50,7 @@ function stopStream() {
 
 function startStream ($stream) {
 	$command = 'cmd /C cd '.getcwd().'\stream && ..\bin\stream.bat '.$GLOBALS["conf"]["boxIP"].' '.$stream["sRef"].' '.$stream["res"].' '.$stream["vb"].' '.$stream["ab"];
-#	echo 'Command: '.$command.'<br>'; #debug
+//	echo 'Command: '.$command.'<br>'; #debug
 	$wshShell = new COM("WScript.Shell");
 	return $oExec = $wshShell->Run($command, 0, false);
 }
@@ -145,7 +145,10 @@ else {
 	}
 	$autoplay = ($GLOBALS["conf"]["autoplay"] == true) ? 1 : 0;
 	$inStandby = inStandby() == 1 ? 1 : 0;
-	if ($inStandby == 1 && $GLOBALS["conf"]["wakeupBox"]) getData('powerstate?newstate=4');
+	if ($inStandby == 1 && $GLOBALS["conf"]["wakeupBox"]) {
+		getData('powerstate?newstate=4');
+		$inStandby = 0;
+	}
 	if ($GLOBALS["conf"]["showServices"]) {
 		$satellites = getData('getsatellites?stype=tv')["satellites"];
 		foreach ($satellites as $sn => $satellite) {

@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.>
+	RewriteEngine On
+	RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(.*)index\.php($|\ |\?)
+	RewriteRule ^ /%1 [R=301,L]
+</IfModule>
+
+<filesMatch "\.(php|js|css|m3u8|mp4|m4s)$">
+  FileETag None
+  <ifModule mod_headers.c>
+     Header unset ETag
+     Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+     Header set Pragma "no-cache"
+     Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+  </ifModule>
+</filesMatch>
