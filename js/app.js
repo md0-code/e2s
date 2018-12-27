@@ -1,13 +1,22 @@
 if (Hls.isSupported()) {
 	var video = document.getElementById('video');
 	var hls = new Hls();
+	hls.on(Hls.Events.ERROR,function(event, data) {
+		if (data.details == 'manifestLoadError') {
+			sleep(1000).then(() => {
+		//		hls.detachMedia();
+				hls.loadSource('stream/e2s.m3u8');
+			//	hls.attachMedia(video);
+			});
+		}
+	});
 }
 
 $(".serviceLink").click(function(e) {
 	e.preventDefault();
 	sessionStorage.sRef = $(this).attr('sRef');
 	if (localStorage.autoplay == 1) startTranscode();
-	$(this).siblings().removeClass('active');
+	$(".serviceLink").removeClass('active');
 	$(this).addClass('active');
 });
 
@@ -78,26 +87,25 @@ function saveSettings() {
 }
 
 function stopTranscode() {
+//	video.pause();
 	hls.detachMedia();
 	$.get('?stop');
 	$('#videoText').hide();
 }
 
 function startTranscode() {
-	video.pause();
+//	video.pause();
 	hls.detachMedia();
 	$.get('?stop');
 	$('#videoText').show();
     $.get(sessionStorage.sRef+'&res='+localStorage.e2sResolution+'&vb='+localStorage.e2sVideoBitrate+'&ab='+localStorage.e2sAudioBitrate, function(data, status) {
-	$('#activeService').html($.parseJSON(data).service);
-	$('#activeTuner').html($.parseJSON(data).tuner);
-	sleep(10000).then(() => {
-			hls.loadSource('stream/e2s.m3u8');
-			hls.attachMedia(video);
-			hls.on(Hls.Events.MANIFEST_PARSED,function() {
-				video.play();
-				$('#videoText').hide();
-			});
+		$('#activeService').html($.parseJSON(data).service);
+		$('#activeTuner').html($.parseJSON(data).tuner);
+		hls.loadSource('stream/e2s.m3u8');
+		hls.attachMedia(video);
+		hls.on(Hls.Events.MANIFEST_PARSED,function() {
+			video.play();
+			$('#videoText').hide();
 		});
 	});
 }
