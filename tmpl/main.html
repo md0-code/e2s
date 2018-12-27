@@ -3,7 +3,7 @@
 <html lang="ro">
 
 <head>
-	<title>E2S</title>
+	<title>E2S Web Interface</title>
 
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -54,7 +54,7 @@
 	</div>
 	<nav class="navbar navbar-expand-sm sticky-top navbar-light bg-light">
 		<div class="container">
-			<button id="power" class="btn mr-2" title="Power"><i class="fa fa-fw fa-power-off"></i><span class="d-none d-md-inline-block">&nbsp;Power</span></button>
+			<button id="power" class="btn <?=($inStandby) ? 'btn-danger' : 'btn-success'?> mr-2" title="Power"><i class="fa fa-fw fa-power-off"></i><span class="d-none d-md-inline-block">&nbsp;Power</span></button>
 			<a id="settings" class="btn btn-info text-white mr-2" title="Settings" href="?settings"><i class="fa fa-fw fa-sliders-h"></i><span class="d-none d-md-inline-block">&nbsp;Settings</span></a>
 			<ul class="navbar-nav ml-auto">
 				<?php if (isset($_SESSION["authenticated"])): ?>
